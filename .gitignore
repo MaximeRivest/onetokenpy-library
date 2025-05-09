@@ -15,3 +15,6 @@ __pycache__/
 *.pywz
 
 onetokenpy.egg-info/
+.venv_test/
+dist/
+build/

@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "onetokenpy"
-version = "0.1.0"
+version = "0.1.11"
 authors = [
   { name = "Maxime Rivest", email = "mrive052@gmail.com" },
 ]
@@ -28,8 +28,16 @@ classifiers = [
 ]
 
 dependencies = [
-    # Add any core dependencies here. For example:
-    # "some-core-library>=1.0.0",
+    "claudette",
+    "openai",
+    "anthropic",
+    "cosette",
+    "requests",
+    "pymupdf",
+    "python-pptx",
+    "pandas",
+    "pillow-heif",
+    "PyYAML",
 ]
 
 [project.urls]
@@ -38,26 +46,10 @@ dependencies = [
 
 [project.optional-dependencies]
 extras = [
-    "requests",
-    "pymupdf",
-    "python-pptx",
-    "pandas",
-    "pillow-heif",
-    "PyYAML",
-    "claudette",
-    "openai",
-    "anthropic",
-    "cosette",
-    "uuid",
-    "mimetypes",
-    "warnings",
-    "ast",
-    "pathlib",
-    "typing",
-    "copy",
+
 ]
 
 [tool.setuptools.packages.find]
 where = ["."]
 include = ["onetokenpy*"]
-exclude = ["tests*", "examples*"]
+exclude = ["tests*", "examples*", ".venv*"]
