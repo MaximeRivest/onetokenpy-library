@@ -1,0 +1,63 @@
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "onetokenpy"
+version = "0.1.0"
+authors = [
+  { name = "Maxime Rivest", email = "mrive052@gmail.com" },
+]
+description = "High-level utilities for seamless LLM interaction, context, and tool use."
+readme = "README.md"
+license = { file = "LICENSE" }
+requires-python = ">=3.8"
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: Apache Software License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Operating System :: OS Independent",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+]
+
+dependencies = [
+    # Add any core dependencies here. For example:
+    # "some-core-library>=1.0.0",
+]
+
+[project.urls]
+"Homepage" = "https://github.com/maximerivest/onetokenpy"
+"Bug Tracker" = "https://github.com/maximerivest/onetokenpy/issues"
+
+[project.optional-dependencies]
+extras = [
+    "requests",
+    "pymupdf",
+    "python-pptx",
+    "pandas",
+    "pillow-heif",
+    "PyYAML",
+    "claudette",
+    "openai",
+    "anthropic",
+    "cosette",
+    "uuid",
+    "mimetypes",
+    "warnings",
+    "ast",
+    "pathlib",
+    "typing",
+    "copy",
+]
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["onetokenpy*"]
+exclude = ["tests*", "examples*"]
