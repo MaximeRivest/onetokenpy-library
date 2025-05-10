@@ -81,7 +81,4 @@ prompt_and_merge_chat("Interesting! Can cosette refer to anything else?",
                        chat, list_of_models)
 
 
-# %%md 
-#let's eval that!
-
 

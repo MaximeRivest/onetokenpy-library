@@ -26,11 +26,10 @@ from .core import (
     # Tool Dispatch
     set_tool_namespace,
     # call_func is usually not called directly by users, cosette uses it internally
-
 )
 
 from . import attachments_handlers # Ensure handlers are registered
-
+from .helpers import llm_picker
 # You might also want to expose specific exceptions if you define custom ones
 # from .exceptions import OnetokenpyError
 
@@ -47,5 +46,5 @@ __all__ = [
     "_CtxToolChatClaudette", # Optional: include if users might need to type hint it
     "_CtxToolChatCosette", # Optional: include if users might need to type hint it
     "AttachmentsTracker", # Optional
-
+    "llm_picker",
 ]

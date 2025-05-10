@@ -20,9 +20,9 @@ import openai
 import cosette.core as cosette
 import claudette.core as claudette
 
-_DEFAULT_MODEL = "openai/gpt-4.1-nano"
-
-
+DEFAULT_MODEL = "openai/gpt-4.1-nano"
+DEFAULT_CLIENT = None
+DEFAULT_SYSTEM_PROMPT = "You are a concise, helpful assistant."
 # =================== CLIENTS ===================
 def anthropic_client(model: str = "claude-3-5-haiku-20241022", api_key: str | None = None):
     """
@@ -44,7 +44,7 @@ def anthropic_client(model: str = "claude-3-5-haiku-20241022", api_key: str | No
         )
     )
 
-def open_router_client(model: str = _DEFAULT_MODEL, api_key: str | None = None):
+def open_router_client(model: str | None = None, api_key: str | None = None):
     """
     Return a cosette Client routed through OpenRouter.
     Requires OPENROUTER_API_KEY in environment.
@@ -53,6 +53,8 @@ def open_router_client(model: str = _DEFAULT_MODEL, api_key: str | None = None):
         model: The model slug for OpenRouter (default: "openai/gpt-4.1-nano").
         api_key: OpenRouter API key. If None, uses OPENROUTER_API_KEY environment variable.
     """
+    if model is None:
+        model = DEFAULT_MODEL
     if api_key is None:
         api_key = os.environ.get("OPENROUTER_API_KEY")
     if not api_key:
@@ -279,7 +281,7 @@ class AttachmentsTracker:
 _CURRENT_CHAT_TOOL_NAMESPACE: Dict[str, Callable] | None = None
 
 def new_chat(
-    model: str = _DEFAULT_MODEL,
+    model: str | None = None,
     sp: str | None = None,
     attach: Attachments | str | Path | list | None = None,
     tools: list | None = None,
@@ -287,7 +289,7 @@ def new_chat(
     max_tool_steps: int = 10,
     trace_tool_calls: bool = False,
     api_key: str | None = None,
-    cli: Union[cosette.Client, claudette.Client] | None = None,
+    cli = None,
     **chat_kwargs
 ):
     """
@@ -306,13 +308,20 @@ def new_chat(
     Returns:
         A chat object.
     """
-    was_custom_cli_provided_to_new_chat = False # Flag to track if cli was explicit
+    if cli is None:
+        cli = DEFAULT_CLIENT
+    if model is None:
+        model = DEFAULT_MODEL
+    if sp is None:
+        sp = DEFAULT_SYSTEM_PROMPT
+
     if cli is None:
         actual_cli = open_router_client(model, api_key)
+        was_custom_cli_provided_to_new_chat = False
     else:
         actual_cli = cli
         was_custom_cli_provided_to_new_chat = True
-
+        
     initial_attach: Attachments
     if attach is None:
         initial_attach = Attachments()
@@ -357,7 +366,7 @@ def new_chat(
             cli=actual_cli,
             model=model,
             attach=initial_attach,
-            sp=sp or "You are a helpful and concise assistant.",
+            sp=sp,
             tools=attachprocessed_tools, 
             tool_function_map=tool_function_map, 
             **final_init_kwargs
@@ -367,7 +376,7 @@ def new_chat(
             cli=actual_cli,
             model=model,
             attach=initial_attach,
-            sp=sp or "You are a helpful and concise assistant.",
+            sp=sp,
             tools=attachprocessed_tools, 
             tool_function_map=tool_function_map, 
             **final_init_kwargs
@@ -462,7 +471,7 @@ class _CtxToolChatCosette(cosette.Chat):
 
         client_model_attr = getattr(new_client, "model", None)
         if client_model_attr and isinstance(client_model_attr, str):
-            if not self._model_explicitly_set_on_chat or self._model == _DEFAULT_MODEL:
+            if not self._model_explicitly_set_on_chat or self._model == DEFAULT_MODEL:
                 self._model = client_model_attr
                 super().model = client_model_attr # Keep cosette.Chat.model in sync
                 self._model_explicitly_set_on_chat = False
@@ -755,7 +764,7 @@ class _CtxToolChatClaudette(claudette.Chat):
         self._max_tool_steps: int = max_tool_steps
         self._trace_tool_calls: bool = trace_tool_calls
 
-        self._cli: claudette.Client = cli # This is the cosette.Client instance
+        self._cli = cli
         self._model: str = model # Authoritative model name for this chat instance
         self._model_explicitly_set_on_chat: bool = True
 
@@ -815,7 +824,7 @@ class _CtxToolChatClaudette(claudette.Chat):
 
         client_model_attr = getattr(new_client, "model", None)
         if client_model_attr and isinstance(client_model_attr, str):
-            if not self._model_explicitly_set_on_chat or self._model == _DEFAULT_MODEL:
+            if not self._model_explicitly_set_on_chat or self._model == DEFAULT_MODEL:
                 self._model = client_model_attr
                 super().model = client_model_attr # Keep cosette.Chat.model in sync
                 self._model_explicitly_set_on_chat = False
@@ -1080,13 +1089,14 @@ class _CtxToolChatClaudette(claudette.Chat):
 
 def ask(
     prompt: str | list | Any,
-    model: str = _DEFAULT_MODEL,
+    model: str | None = None,
     sp: str | None = None,
     attach: Attachments | str | Path | list | None = None,
     tools: list | None = None,
     auto_toolloop: bool | None = None,
     max_tool_steps: int = 10,
     trace_tool_calls: bool = False,
+    cli = None,
     **chat_kwargs
 ) -> str:
     """
@@ -1096,11 +1106,14 @@ def ask(
     if auto_toolloop is None:
         auto_toolloop = bool(tools) # Enable auto_toolloop if tools are provided
 
-    # `new_chat` will handle passing `cli`, `api_key` etc. from `chat_kwargs`
-    # and also `auto_toolloop`, `max_tool_steps`, `trace_tool_calls`.
-    if "cli" in chat_kwargs and isinstance(chat_kwargs["cli"], claudette.Client):
-        model = chat_kwargs["cli"].model
+    if cli is None:
+        cli = DEFAULT_CLIENT
 
+    if model is None:
+        model = DEFAULT_MODEL
+
+    if sp is None:
+        sp = DEFAULT_SYSTEM_PROMPT
 
     chat = new_chat(
         model=model,
@@ -1110,14 +1123,14 @@ def ask(
         auto_toolloop=auto_toolloop,
         max_tool_steps=max_tool_steps,
         trace_tool_calls=trace_tool_calls,
+        cli=cli,
         **chat_kwargs,
     )
     # Any API-specific kwargs in `chat_kwargs` (like temperature) are passed to `new_chat`
     # and then to `_CtxToolChat`'s constructor.
     # `_CtxToolChat.__call__` will then use them.
     result = chat(prompt) # No need to pass chat_kwargs here again, they are part of chat obj state or default __call__
-
-    if isinstance(result, claudette.Chat):
+    if type(chat.c) == claudette.Client:
         return claudette.contents(result)
     else:
         return cosette.contents(result)

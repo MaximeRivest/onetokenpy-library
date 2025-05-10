@@ -4,11 +4,33 @@ import onetokenpy as ot
 ot.ask("What is the capital of France?")
 
 #%%
-ot.ask("What is the capital of France?", cli=ot.anthropic_client())
+ot.ask("What is the capital of France?", cli=ot.anthropic_client(), model="claude-3-5-haiku-20241022")
 
 
 #%%
-ot.ask("What is the capital of France?", cli=ot.anthropic_client(model="claude-3-5-sonnet-20240620"))
+ot.core.DEFAULT_CLIENT = ot.anthropic_client()
+ot.core.DEFAULT_MODEL = "claude-3-5-haiku-20241022"
+#%%
+
+ot.ask("What is the capital of France?")
+
+#%%
+import cosette
+import openai
+
+ot.core.DEFAULT_MODEL = "deepseek-r1:1.5b"
+ot.core.DEFAULT_CLIENT = cosette.Client(
+        model=ot.core.DEFAULT_MODEL,
+        cli=openai.OpenAI(
+            base_url = 'http://localhost:11434/v1',
+            api_key='ollama', # required, but unused
+        )
+    )
+
+
+
+ot.ask("What is the capital of France?")
+
 
 #%%
 import onetokenpy as ot
