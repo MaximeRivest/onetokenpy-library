@@ -52,4 +52,4 @@ extras = [
 [tool.setuptools.packages.find]
 where = ["."]
 include = ["onetokenpy*"]
-exclude = ["tests*", "examples*", ".venv*"]
+exclude = ["tests*", "examples*", ".venv*", "chats*"]

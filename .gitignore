@@ -18,3 +18,5 @@ onetokenpy.egg-info/
 .venv_test/
 dist/
 build/
+
+chats/

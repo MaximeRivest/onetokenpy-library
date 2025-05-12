@@ -1130,7 +1130,10 @@ def ask(
     # and then to `_CtxToolChat`'s constructor.
     # `_CtxToolChat.__call__` will then use them.
     result = chat(prompt) # No need to pass chat_kwargs here again, they are part of chat obj state or default __call__
-    if type(chat.c) == claudette.Client:
+    return contents(result)
+
+def contents(result: Any) -> str:
+    if type(result) == claudette.Message:
         return claudette.contents(result)
     else:
         return cosette.contents(result)

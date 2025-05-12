@@ -119,3 +119,18 @@ import onetokenpy as ot
 ot.ask("What is in this image?",
        attach=ot.Attachments("/home/maxime/Pictures/Screenshot from 2020-07-04 00-42-04.png"))
 # %%
+import onetokenpy as ot
+import claudette
+import anthropic
+
+
+c = claudette.Client(
+        model="claude-3-7-sonnet-latest", # This sets cosette.Client.model
+        cli=anthropic.Anthropic(
+            api_key=os.environ.get("ANTHROPIC_API_KEY")
+        )
+    )
+c("hello")
+
+c
+# %%

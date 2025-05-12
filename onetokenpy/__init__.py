@@ -25,6 +25,7 @@ from .core import (
 
     # Tool Dispatch
     set_tool_namespace,
+    contents,
     # call_func is usually not called directly by users, cosette uses it internally
 )
 
@@ -47,4 +48,5 @@ __all__ = [
     "_CtxToolChatCosette", # Optional: include if users might need to type hint it
     "AttachmentsTracker", # Optional
     "llm_picker",
+    "contents",
 ]

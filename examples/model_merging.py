@@ -50,35 +50,35 @@ Do not refer to the models in your response, just use then for crafting the best
     chat.h[-1] = {"role":"assistant", "content":ot.contents(merged_response)}
     return Markdown(chat.h[-1]["content"])
 
-# %%
-list_of_models = [
-    "anthropic/claude-3.5-haiku",
-    "openai/gpt-4.1",
-    "x-ai/grok-3-mini-beta",
-    "google/gemini-2.5-flash-preview"
-]
+# # %%
+# list_of_models = [
+#     "anthropic/claude-3.5-haiku",
+#     "openai/gpt-4.1",
+#     "x-ai/grok-3-mini-beta",
+#     "google/gemini-2.5-flash-preview"
+# ]
 
-chat = ot.new_chat(model="x-ai/grok-3-mini-beta")
-prompt_and_merge_chat("Tell me a joke", chat, list_of_models)
+# chat = ot.new_chat(model="x-ai/grok-3-mini-beta")
+# prompt_and_merge_chat("Tell me a joke", chat, list_of_models)
 
 
-# %%
-chat.h
+# # %%
+# chat.h
 
-# %%
-from onetokenpy import new_chat, Attachments
-list_of_models = [
-    "anthropic/claude-3.5-haiku",
-    "openai/gpt-4.1",
-    "x-ai/grok-3-mini-beta",
-    "google/gemini-2.5-flash-preview"
-]
-chat = new_chat(attach=Attachments("https://answerdotai.github.io/cosette/llms.txt"))
-prompt_and_merge_chat("What is cosette?", chat, list_of_models)
+# # %%
+# from onetokenpy import new_chat, Attachments
+# list_of_models = [
+#     "anthropic/claude-3.5-haiku",
+#     "openai/gpt-4.1",
+#     "x-ai/grok-3-mini-beta",
+#     "google/gemini-2.5-flash-preview"
+# ]
+# chat = new_chat(attach=Attachments("https://answerdotai.github.io/cosette/llms.txt"))
+# prompt_and_merge_chat("What is cosette?", chat, list_of_models)
 
-# %%
-prompt_and_merge_chat("Interesting! Can cosette refer to anything else?",
-                       chat, list_of_models)
+# # %%
+# prompt_and_merge_chat("Interesting! Can cosette refer to anything else?",
+#                        chat, list_of_models)
 
 
 
